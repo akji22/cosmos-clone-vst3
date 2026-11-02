@@ -146,30 +146,26 @@ target_compile_definitions(SharedCode
 # See https://github.com/juce-framework/JUCE/blob/master/docs/CMake%20API.md#juce_add_module
 # However, with Pamplejuce, you'll link modules to SharedCode with INTERFACE visibility
 # This allows the JUCE plugin targets and the Tests target to link against it
-target_link_libraries(SharedCode
-    INTERFACE
-    Assets
-    melatonin_inspector
-    juce_audio_utils
-    juce_audio_processors
-    juce_dsp
-    juce_gui_basics
-    juce_gui_extra
-    juce::juce_recommended_config_flags
-    juce::juce_recommended_lto_flags
-    juce::juce_recommended_warning_flags)
+target_link_libraries("${PROJECT_NAME}"
+    PRIVATE
+        BinaryData
+        juce::juce_audio_utils
+        juce::juce_audio_processors
+        juce::juce_audio_formats
+        juce::juce_audio_devices
+        juce::juce_dsp
+        juce::juce_gui_basics
+    PUBLIC
+        juce::juce_recommended_config_flags
+        juce::juce_recommended_lto_flags
+        juce::juce_recommended_warning_flags)
+
 
 # Link the JUCE plugin targets our SharedCode target
 target_link_libraries("${PROJECT_NAME}" PRIVATE SharedCode)
 
 # IPP support, comment out to disable
 include(PamplejuceIPP)
-
-# Everything related to the tests target
-pamplejuce_add_tests()
-
-# A separate target for Benchmarks (keeps the Tests target fast)
-pamplejuce_add_benchmarks()
 
 # Output some config for CI (like our PRODUCT_NAME)
 include(GitHubENV)
